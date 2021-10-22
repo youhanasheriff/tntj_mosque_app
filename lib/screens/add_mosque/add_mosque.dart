@@ -94,6 +94,14 @@ class _AddMosqueState extends State<AddMosque> {
     });
   }
 
+  Future selectImage(int i) async {
+    var temp = await _helpers.getImage(i, ImageSource.camera);
+    setState(() {
+      pickedImage = temp;
+      imageUrl[i] = pickedImage!.path;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,113 +133,12 @@ class _AddMosqueState extends State<AddMosque> {
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        controller: nameTextController,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          label: Text("Mosque Name"),
-                        ),
-                        textInputAction: TextInputAction.next,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        controller: branchController,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          label: Text("Branch Name"),
-                        ),
-                        textInputAction: TextInputAction.next,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      // child: TextField(
-                      //   controller: areaController,
-                      //   decoration: const InputDecoration(
-                      //     border: InputBorder.none,
-                      //     label: Text("Name of the Area"),
-                      //   ),
-                      //   textInputAction: TextInputAction.next,
-                      // ),
-                      child: FutureBuilder<List<String>>(
-                          future: Helpers().getAreas(list),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            } else if (snapshot.hasError) {
-                              return const Center(
-                                  child: Text("Error occured...."));
-                            } else {
-                              var docs = snapshot.data!;
-
-                              return CustomDropDown<String>(
-                                lists: docs,
-                                isTitle: false,
-                                selectedArea: selectedArea,
-                                searchText: "Search",
-                                onChange: (value) {
-                                  setState(() {
-                                    selectedArea = value!;
-                                  });
-                                },
-                              );
-                            }
-                          }),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        controller: addressController,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          label: Text("Full Address"),
-                        ),
-                        textInputAction: TextInputAction.next,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        controller: pinCodeController,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          label: Text("Pin Code :"),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            isLocationSelected
-                                ? "Location Selected"
-                                : "Location",
-                            style: TextStyle(
-                              color: isLocationSelected
-                                  ? themeBlue
-                                  : Colors.grey[700],
-                              fontSize: 17,
-                            ),
-                          ),
-                          TextButton.icon(
-                            onPressed: getLocation,
-                            style: ButtonStyle(
-                                foregroundColor:
-                                    MaterialStateProperty.all(themeBlue)),
-                            icon: const Icon(Icons.add_location_alt_outlined),
-                            label: const Text("Select location"),
-                          ),
-                        ],
-                      ),
-                    ),
+                    _buildInputText("Mosque Name", nameTextController),
+                    _buildInputText("Branch Name", branchController),
+                    _buildSelectArea(),
+                    _buildInputText("Full Address", addressController),
+                    _buildInputText("Pin Code :", pinCodeController),
+                    _buildSelectLocation(),
                     const SizedBox(height: 15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -239,14 +146,7 @@ class _AddMosqueState extends State<AddMosque> {
                         for (var i = 0; i < imageUrl.length; i++)
                           imageSelection(
                             imageUrl[i],
-                            () async {
-                              var temp = await _helpers.getImage(
-                                  i, ImageSource.camera);
-                              setState(() {
-                                pickedImage = temp;
-                                imageUrl[i] = pickedImage!.path;
-                              });
-                            },
+                            () => selectImage(i),
                           )
                       ],
                     ),
@@ -254,6 +154,74 @@ class _AddMosqueState extends State<AddMosque> {
                 ),
               ),
             ),
+    );
+  }
+
+  Padding _buildSelectLocation() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            isLocationSelected ? "Location Selected" : "Location",
+            style: TextStyle(
+              color: isLocationSelected ? themeBlue : Colors.grey[700],
+              fontSize: 17,
+            ),
+          ),
+          TextButton.icon(
+            onPressed: getLocation,
+            style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all(themeBlue)),
+            icon: const Icon(Icons.add_location_alt_outlined),
+            label: const Text("Select location"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Padding _buildSelectArea() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: FutureBuilder<List<String>>(
+          future: Helpers().getAreas(list),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return const Center(child: Text("Error occured...."));
+            } else {
+              var docs = snapshot.data!;
+
+              return CustomDropDown<String>(
+                lists: docs,
+                isTitle: false,
+                selectedArea: selectedArea,
+                searchText: "Search",
+                onChange: (value) {
+                  setState(() {
+                    selectedArea = value!;
+                  });
+                },
+              );
+            }
+          }),
+    );
+  }
+
+  Padding _buildInputText(String text, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          label: Text(text),
+        ),
+        textInputAction: TextInputAction.next,
+      ),
     );
   }
 
