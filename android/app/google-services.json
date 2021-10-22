@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "849231547681",
+    "project_id": "tntj-mosque",
+    "storage_bucket": "tntj-mosque.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:849231547681:android:824134eacfadffc3f84260",
+        "android_client_info": {
+          "package_name": "com.youhanasheriff.tntj_mosque"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "849231547681-hl0vqdvnft0t32ijihummre032dj3184.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.youhanasheriff.tntj_mosque",
+            "certificate_hash": "c5b8b90e4f273033735451857d3d1738af101876"
+          }
+        },
+        {
+          "client_id": "849231547681-g7iineu2df3g5hnsbk68vei2orvv9m9c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBig5y9Un4xzajtrQjjg069J_rvYu3aq28"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "849231547681-g7iineu2df3g5hnsbk68vei2orvv9m9c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
