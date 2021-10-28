@@ -27,8 +27,6 @@ class _AddMosqueState extends State<AddMosque> {
 
   final Helpers _helpers = Helpers();
 
-  final SmallFunc _smallFunc = SmallFunc();
-
   final List<String> list = ["--"];
 
   String selectedArea = "Select an area";
@@ -59,8 +57,7 @@ class _AddMosqueState extends State<AddMosque> {
         pinCode.trim().isEmpty ||
         _temp == 3 ||
         !isLocationSelected) {
-      _smallFunc.showSnackBar(
-          "Fill all the fields to submit. Insha Allah", context);
+      showSnackBar("Fill all the fields to submit. Insha Allah", context);
     } else {
       setState(() {
         isLoading = true;
@@ -84,7 +81,7 @@ class _AddMosqueState extends State<AddMosque> {
   }
 
   showIt(String text) {
-    _smallFunc.showSnackBar(text, context);
+    showSnackBar(text, context);
   }
 
   Future getLocation() async {

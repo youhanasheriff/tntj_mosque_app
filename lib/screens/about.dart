@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tntj_mosque/config/config.dart';
+import 'package:tntj_mosque/helpers/small_functions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatelessWidget {
@@ -23,6 +24,11 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        extendBodyBehindAppBar: true,
         backgroundColor: themeBlue,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,10 +68,6 @@ class AboutPage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  MaterialStateProperty<T> getStyle<T>(T value) {
-    return MaterialStateProperty.all(value);
   }
 
   Text buildTitle(title) {

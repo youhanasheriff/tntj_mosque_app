@@ -47,17 +47,18 @@ class _HomeBodyState extends State<HomeBody> {
                       if (user!.isAnonymous &&
                           snapshot.data!.docs.length == index) {
                         return Center(
-                            child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "Login with google to add a mosque",
-                            style: TextStyle(
-                              color: Colors.grey[700],
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Login with google to add a mosque",
+                              style: TextStyle(
+                                color: Colors.grey[700],
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
-                        ));
+                        );
                       } else {
                         Mosque mosque = Mosque.fromData(docs[index]);
                         return MosqueCard(

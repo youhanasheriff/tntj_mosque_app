@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:tntj_mosque/auth/auth.dart';
 import 'package:tntj_mosque/config/config.dart';
 import 'package:tntj_mosque/screens/screens.dart';
+import 'package:tntj_mosque/widgets/widget.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../helpers/small_functions.dart';
 
 class LoginPage extends StatelessWidget {
   static String routeName = "/login";
@@ -11,6 +14,78 @@ class LoginPage extends StatelessWidget {
   }) : super(key: key);
 
   final AuthHelper _authHelper = AuthHelper();
+
+  void sendEMail() {
+    String url =
+        "mailto:youhanasheriff2000@gmail.com?subject=For Verification&body=Assalamualaikum, I'm \"YOUR NAME\" from \"YOUR BRANCH NAME\". I want to add our mosque to this app.";
+    launch(url);
+  }
+
+  void showDFormBox(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Account Verify"),
+          titleTextStyle: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+          content: const Text.rich(
+            TextSpan(
+              text: "If you already verified your account.\n",
+              children: [
+                TextSpan(
+                  text: "Click ",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                  ),
+                ),
+                TextSpan(
+                  text: "Continue",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: themeBlue,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.of(context).pushNamed(VerificationForm.routeName);
+              },
+              child: const Text(
+                "Verify Account",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _authHelper.loginWithGoogle();
+              },
+              child: const Text(
+                "Continue",
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+      barrierDismissible: true,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +123,7 @@ class LoginPage extends StatelessWidget {
           const SizedBox(height: 15),
           buildButtons(
             "Sign in with google",
-            _authHelper.loginWithGoogle,
+            () => showDFormBox(context), //_authHelper.loginWithGoogle,
             isGoogle: true,
           ),
           const Spacer(flex: 2),
@@ -67,7 +142,8 @@ class LoginPage extends StatelessWidget {
             children: [
               ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: getStyle<Color>(themeLightBlue),
+                  backgroundColor:
+                      getStyle<Color>(Colors.white.withOpacity(0.85)),
                   elevation: getStyle(2),
                   shape: getStyle(
                     RoundedRectangleBorder(
@@ -91,8 +167,11 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Center buildButtons(String title, Function() action,
-      {bool isGoogle = false}) {
+  Center buildButtons(
+    String title,
+    Function() action, {
+    bool isGoogle = false,
+  }) {
     return Center(
       child: ElevatedButton(
         onPressed: action,
@@ -133,9 +212,5 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  MaterialStateProperty<T> getStyle<T>(T value) {
-    return MaterialStateProperty.all(value);
   }
 }
