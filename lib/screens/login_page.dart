@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tntj_mosque/auth/auth.dart';
 import 'package:tntj_mosque/config/config.dart';
+import 'package:tntj_mosque/helpers/small_functions.dart';
 import 'package:tntj_mosque/screens/screens.dart';
 
 class LoginPage extends StatelessWidget {
@@ -133,9 +134,5 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  MaterialStateProperty<T> getStyle<T>(T value) {
-    return MaterialStateProperty.all(value);
   }
 }
