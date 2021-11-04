@@ -4,6 +4,7 @@ import 'package:maps_launcher/maps_launcher.dart';
 import 'package:tntj_mosque/config/config.dart';
 import 'package:tntj_mosque/models/mosque.dart';
 import 'package:share/share.dart';
+import 'package:tntj_mosque/screens/screens.dart';
 
 class MosquePage extends StatelessWidget {
   static String routeName = "/mosque_page";
@@ -32,48 +33,60 @@ class MosquePage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Card(
-            margin: const EdgeInsets.all(0),
-            child: Container(
-              width: double.infinity,
-              height: 250,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  alignment: Alignment.center,
-                  image: CachedNetworkImageProvider(
-                    mosque.images[0],
+          Hero(
+            tag: mosque.id,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  ImageView.routeName,
+                  arguments: mosque.images,
+                );
+              },
+              child: Card(
+                margin: const EdgeInsets.all(0),
+                child: Container(
+                  width: double.infinity,
+                  height: 250,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      alignment: Alignment.center,
+                      image: CachedNetworkImageProvider(
+                        mosque.images[0],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height: 56,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                decoration: const BoxDecoration(
-                  color: Colors.black54,
-                ),
-                alignment: Alignment.centerLeft,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      name,
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: 25,
-                      ),
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: 56,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: const BoxDecoration(
+                      color: Colors.black54,
                     ),
-                    IconButton(
-                      onPressed: () {
-                        shareLocation(mosque);
-                      },
-                      icon: Icon(
-                        Icons.share,
-                        color: Colors.white.withOpacity(0.9),
-                      ),
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          name,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.9),
+                            fontSize: 25,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            shareLocation(mosque);
+                          },
+                          icon: Icon(
+                            Icons.share,
+                            color: Colors.white.withOpacity(0.9),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),

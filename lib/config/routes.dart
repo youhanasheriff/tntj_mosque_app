@@ -8,4 +8,6 @@ final Map<String, WidgetBuilder> routes = {
   SearchPage.routeName: (context) => const SearchPage(),
   MosquePage.routeName: (context) => const MosquePage(),
   AboutPage.routeName: (context) => const AboutPage(),
+  VerificationForm.routeName: (context) => VerificationForm(),
+  ImageView.routeName: (context) => const ImageView(),
 };

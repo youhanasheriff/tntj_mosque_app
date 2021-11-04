@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Mosque {
   final String name;
+  final String id;
   final List images;
   final String address;
   final String branch;
@@ -11,6 +12,7 @@ class Mosque {
 
   Mosque({
     required this.name,
+    required this.id,
     required this.images,
     required this.address,
     required this.branch,
@@ -20,6 +22,7 @@ class Mosque {
   });
 
   factory Mosque.fromData(QueryDocumentSnapshot doc) => Mosque(
+        id: doc.id,
         name: doc['name'],
         images: doc['images'],
         address: doc['address'],

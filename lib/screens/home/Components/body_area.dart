@@ -60,8 +60,11 @@ class _HomeBodyState extends State<HomeBody> {
                         ));
                       } else {
                         Mosque mosque = Mosque.fromData(docs[index]);
-                        return MosqueCard(
-                          mosque: mosque,
+                        return Hero(
+                          tag: mosque.id,
+                          child: MosqueCard(
+                            mosque: mosque,
+                          ),
                         );
                       }
                     },

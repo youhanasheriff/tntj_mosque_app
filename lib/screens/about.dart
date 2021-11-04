@@ -21,6 +21,7 @@ class AboutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return Material(
       child: Scaffold(
         backgroundColor: themeBlue,
@@ -28,9 +29,9 @@ class AboutPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Spacer(flex: 6),
-            const CircleAvatar(
-              radius: 125,
-              backgroundImage: AssetImage("assets/image.jpg"),
+            CircleAvatar(
+              radius: width * 0.28,
+              backgroundImage: const AssetImage("assets/image.jpg"),
             ),
             const Spacer(flex: 2),
             buildTitle("Developed By : "),

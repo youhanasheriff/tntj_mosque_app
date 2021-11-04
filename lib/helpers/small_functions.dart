@@ -6,3 +6,7 @@ class SmallFunc {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
+
+MaterialStateProperty<T> getStyle<T>(T value) {
+  return MaterialStateProperty.all(value);
+}
