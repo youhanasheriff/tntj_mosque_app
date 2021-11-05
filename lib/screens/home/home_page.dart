@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,11 @@ class HomePage extends StatelessWidget {
   }) : super(key: key);
 
   final User? user = FirebaseAuth.instance.currentUser;
+
+  final CollectionReference userRef =
+      FirebaseFirestore.instance.collection("users");
   final AuthHelper _authHelper = AuthHelper();
+  final emptyWidget = const SizedBox.shrink();
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +27,29 @@ class HomePage extends StatelessWidget {
       appBar: buildAppbar(context),
       floatingActionButton: user!.isAnonymous
           ? null
-          : FloatingActionButton(
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(AddMosque.routeName),
-              child: const Icon(Icons.add),
-              backgroundColor: themeBlue,
-            ),
+          : StreamBuilder<QuerySnapshot>(
+              stream: userRef
+                  .where(
+                    "id",
+                    isEqualTo: user!.uid,
+                  )
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData ||
+                    snapshot.connectionState == ConnectionState.waiting ||
+                    snapshot.hasError) {
+                  return emptyWidget;
+                } else {
+                  return snapshot.data!.docs[0]['is_verified']
+                      ? FloatingActionButton(
+                          onPressed: () => Navigator.of(context)
+                              .pushNamed(AddMosque.routeName),
+                          child: const Icon(Icons.add),
+                          backgroundColor: themeBlue,
+                        )
+                      : emptyWidget;
+                }
+              }),
       body: const HomeBody(),
     );
   }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
@@ -9,6 +10,7 @@ class Helpers {
   final ImagePicker _picker = ImagePicker();
   final Location location = Location();
   late LocationData _locationData;
+  final User? user = FirebaseAuth.instance.currentUser;
 
   final List<XFile?> images = [];
   String locationLink = "";
@@ -75,12 +77,17 @@ class Helpers {
       "area": area,
       "address": address,
       "pin_no": pinCode,
-      "images": [
-        "https://library.kissclipart.com/20180901/xfw/kissclipart-masjid-icon-clipart-sheikh-zayed-mosque-clip-art-072931d5de56f448.png"
-      ],
+      "images": [],
       "location": {
         "lat": _locationData.latitude.toString(),
         "long": _locationData.longitude.toString(),
+      },
+      "is_verified": false,
+      "uploaded_at": Timestamp.now(),
+      "uploaded_by": {
+        "name": user!.displayName,
+        "id": user!.uid,
+        "email": user!.email
       },
     });
 

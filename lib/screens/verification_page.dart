@@ -7,11 +7,16 @@ import 'package:tntj_mosque/helpers/small_functions.dart';
 import 'package:tntj_mosque/models/user.dart' as user_model;
 import 'package:tntj_mosque/screens/home/home_page.dart';
 
-class VerificationForm extends StatelessWidget {
+class VerificationForm extends StatefulWidget {
   static String routeName = "/verification";
 
-  VerificationForm({Key? key}) : super(key: key);
+  const VerificationForm({Key? key}) : super(key: key);
 
+  @override
+  State<VerificationForm> createState() => _VerificationFormState();
+}
+
+class _VerificationFormState extends State<VerificationForm> {
   final nameController = TextEditingController();
   final branchController = TextEditingController();
   final areaController = TextEditingController();
@@ -19,20 +24,40 @@ class VerificationForm extends StatelessWidget {
   final mobileController = TextEditingController();
   final CollectionReference collectionRef =
       FirebaseFirestore.instance.collection("users");
+  final AuthHelper _authHelper = AuthHelper();
+
+  String? errorMobile;
 
   _onSubmit(BuildContext context) async {
-    await AuthHelper().loginWithGoogle();
+    if (mobileController.text.length < 10) {
+      setState(() {
+        errorMobile = "Mobile number must be 10 digits";
+      });
+      return;
+    } else {
+      setState(() {
+        errorMobile = null;
+      });
+    }
+    await _authHelper.loginWithGoogle();
     final User? user = FirebaseAuth.instance.currentUser;
     Map<String, dynamic> userData = user_model.userToJson(user_model.User(
       id: user!.uid,
       name: nameController.text,
       branch: branchController.text,
       area: areaController.text,
-      email: user.email,
+      userDetails: user_model.UserDetails(
+        displayName: user.displayName!,
+        email: user.email!,
+        uid: user.uid,
+      ),
       mobile: int.parse(mobileController.text),
       isVerified: false,
     ));
-    collectionRef.doc(user.uid).set(userData);
+    await collectionRef.doc(user.uid).set({
+      ...userData,
+      "submitted_at": Timestamp.now(),
+    });
     Navigator.pushReplacementNamed(context, HomePage.routeName);
   }
 
@@ -115,6 +140,7 @@ class VerificationForm extends StatelessWidget {
           border: InputBorder.none,
           prefixText: inputType == TextInputType.phone ? "+91 " : null,
           label: Text(text),
+          errorText: inputType == TextInputType.phone ? errorMobile : null,
         ),
         textInputAction: TextInputAction.next,
       ),

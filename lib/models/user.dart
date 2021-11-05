@@ -1,11 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class User {
   final String id;
   final String name;
   final String branch;
   final String area;
-  final String? email;
+  final UserDetails userDetails;
   final int mobile;
   final bool isVerified;
 
@@ -14,7 +12,7 @@ class User {
     required this.name,
     required this.branch,
     required this.area,
-    this.email,
+    required this.userDetails,
     required this.mobile,
     required this.isVerified,
   });
@@ -24,7 +22,7 @@ class User {
         name: doc['name'] ?? "",
         branch: doc['branch'],
         area: doc['area'],
-        email: doc['email'],
+        userDetails: UserDetails(displayName: doc['name'], email: '', uid: ''),
         mobile: doc['mobile'],
         isVerified: doc['is_verified'],
       );
@@ -36,8 +34,24 @@ Map<String, dynamic> userToJson(User userData) {
     "userName": userData.name,
     "branch": userData.branch,
     "area": userData.area,
-    "email": userData.email,
+    "user_details": {
+      "name": userData.userDetails.displayName,
+      "id": userData.userDetails.uid,
+      "email": userData.userDetails.email
+    },
     "mobile": userData.mobile,
     "is_verified": userData.isVerified,
   };
+}
+
+class UserDetails {
+  final String displayName;
+  final String uid;
+  final String email;
+
+  UserDetails({
+    required this.displayName,
+    required this.uid,
+    required this.email,
+  });
 }

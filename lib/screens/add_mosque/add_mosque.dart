@@ -16,27 +16,16 @@ class AddMosque extends StatefulWidget {
 
 class _AddMosqueState extends State<AddMosque> {
   final nameTextController = TextEditingController();
-
   final addressController = TextEditingController();
-
   final pinCodeController = TextEditingController();
-
   final branchController = TextEditingController();
-
   final List<String> imageUrl = List.generate(3, (index) => "");
-
   final Helpers _helpers = Helpers();
-
   final SmallFunc _smallFunc = SmallFunc();
-
   final List<String> list = ["--"];
-
   String selectedArea = "Select an area";
-
   XFile? pickedImage;
-
   bool isLoading = false;
-
   bool isLocationSelected = false;
 
   Future<void> addMosque({
@@ -77,7 +66,9 @@ class _AddMosqueState extends State<AddMosque> {
         setState(() {
           isLoading = false;
         });
-
+        _smallFunc.showSnackBar(
+            "Your mosque is submitted it will be reviewed and added to the database. Insha Allah",
+            context);
         Navigator.pop(context);
       });
     }

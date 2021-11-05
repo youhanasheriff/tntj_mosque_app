@@ -20,7 +20,13 @@ class _HomeBodyState extends State<HomeBody> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection("mosques").snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection("mosques")
+            .where(
+              "is_verified",
+              isEqualTo: true,
+            )
+            .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
