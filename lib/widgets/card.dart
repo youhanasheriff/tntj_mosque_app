@@ -86,8 +86,9 @@ class MosqueCard extends StatelessWidget {
                           IconButton(
                             onPressed: () {
                               MapsLauncher.launchCoordinates(
-                                  double.parse(mosque.location.lat),
-                                  double.parse(mosque.location.long));
+                                mosque.location.lat,
+                                mosque.location.long,
+                              );
                             },
                             icon: const Icon(
                               Icons.location_on_outlined,

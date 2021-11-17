@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tntj_mosque/models/models.dart';
 
 class Mosque {
   final String name;
@@ -7,6 +8,7 @@ class Mosque {
   final String address;
   final String branch;
   final String area;
+  final UserDetails userDetails;
   final String pinNo;
   final Location location;
 
@@ -15,6 +17,7 @@ class Mosque {
     required this.id,
     required this.images,
     required this.address,
+    required this.userDetails,
     required this.branch,
     required this.area,
     required this.pinNo,
@@ -30,18 +33,13 @@ class Mosque {
         area: doc['area'],
         pinNo: doc['pin_no'],
         location: Location(
-          lat: doc['location']['lat'],
-          long: doc['location']['long'],
+          lat: doc['location'].latitude,
+          long: doc['location'].longitude,
+        ),
+        userDetails: UserDetails(
+          displayName: doc['uploaded_by']['display_name'],
+          email: doc['uploaded_by']['email'],
+          uid: doc['uploaded_by']['id'],
         ),
       );
-}
-
-class Location {
-  final String lat;
-  final String long;
-
-  Location({
-    required this.lat,
-    required this.long,
-  });
 }

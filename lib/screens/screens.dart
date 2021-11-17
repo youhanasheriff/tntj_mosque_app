@@ -6,3 +6,4 @@ export './mosque/mosque_page.dart';
 export './about.dart';
 export './verification_page.dart';
 export './mosque/image_view.dart';
+export './add_mosque/google_maps.dart';

@@ -11,6 +11,10 @@ class ImageView extends StatelessWidget {
   Widget build(BuildContext context) {
     var images = ModalRoute.of(context)!.settings.arguments as List;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+      ),
+      extendBodyBehindAppBar: true,
       body: SizedBox(
         height: double.infinity,
         width: double.infinity,

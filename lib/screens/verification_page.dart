@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tntj_mosque/auth/auth.dart';
 import 'package:tntj_mosque/config/config.dart';
 import 'package:tntj_mosque/helpers/small_functions.dart';
-import 'package:tntj_mosque/models/user.dart' as user_model;
+import 'package:tntj_mosque/models/models.dart' as user_model;
 import 'package:tntj_mosque/screens/home/home_page.dart';
 
 class VerificationForm extends StatefulWidget {

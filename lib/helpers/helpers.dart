@@ -9,14 +9,13 @@ import 'package:location/location.dart';
 class Helpers {
   final ImagePicker _picker = ImagePicker();
   final Location location = Location();
-  late LocationData _locationData;
   final User? user = FirebaseAuth.instance.currentUser;
 
   final List<XFile?> images = [];
   String locationLink = "";
 
-  Future<List<String>> getAreas(List<String> list) async {
-    List<String> _temp = list;
+  Future<List<String>> getAreas() async {
+    List<String> _temp = ["--"];
     var snapshot = await FirebaseFirestore.instance.collection("areas").get();
     var docs = snapshot.docs;
     for (var i = 0; i < docs.length; i++) {
@@ -35,10 +34,9 @@ class Helpers {
     return pickedImage;
   }
 
-  Future<bool> getLocation({showSnack}) async {
+  Future<bool> getLocationAccess({showSnack}) async {
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
-
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
       _serviceEnabled = await location.requestService();
@@ -47,7 +45,6 @@ class Helpers {
         return false;
       }
     }
-
     _permissionGranted = await location.hasPermission();
     if (_permissionGranted == PermissionStatus.denied) {
       _permissionGranted = await location.requestPermission();
@@ -56,40 +53,39 @@ class Helpers {
         return false;
       }
     }
-    location.changeSettings(accuracy: LocationAccuracy.high);
-    _locationData = await location.getLocation();
 
     return true;
   }
 
-  Future uploadMosque({
+  Future<void> uploadMosque({
     required String name,
     required String branch,
     required String area,
     required String address,
     required String pinCode,
+    required GeoPoint location,
   }) async {
     final _storage = FirebaseStorage.instance.ref("/mosques");
 
-    final docRef = await FirebaseFirestore.instance.collection("mosques").add({
+    var data = {
       "name": name,
       "branch": branch,
       "area": area,
       "address": address,
       "pin_no": pinCode,
       "images": [],
-      "location": {
-        "lat": _locationData.latitude.toString(),
-        "long": _locationData.longitude.toString(),
-      },
+      "location": location,
       "is_verified": false,
       "uploaded_at": Timestamp.now(),
       "uploaded_by": {
-        "name": user!.displayName,
+        "display_name": user!.displayName,
         "id": user!.uid,
         "email": user!.email
       },
-    });
+    };
+
+    final docRef =
+        await FirebaseFirestore.instance.collection("mosques").add(data);
 
     List<File> _image = [];
 
