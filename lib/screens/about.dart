@@ -24,6 +24,8 @@ class AboutPage extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     return Material(
       child: Scaffold(
+        appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
+        extendBodyBehindAppBar: true,
         backgroundColor: themeBlue,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -1,11 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tntj_mosque/models/models.dart';
 
 class User {
   final String id;
   final String name;
   final String branch;
   final String area;
-  final String? email;
+  final UserDetails userDetails;
   final int mobile;
   final bool isVerified;
 
@@ -14,17 +14,21 @@ class User {
     required this.name,
     required this.branch,
     required this.area,
-    this.email,
+    required this.userDetails,
     required this.mobile,
     required this.isVerified,
   });
 
   factory User.fromData(doc) => User(
         id: doc['id'],
-        name: doc['name'] ?? "",
+        name: doc['user_name'],
         branch: doc['branch'],
         area: doc['area'],
-        email: doc['email'],
+        userDetails: UserDetails(
+          displayName: doc['user_details']['display_name'],
+          email: doc['user_details']['email'],
+          uid: doc['user_details']['id'],
+        ),
         mobile: doc['mobile'],
         isVerified: doc['is_verified'],
       );
@@ -33,10 +37,14 @@ class User {
 Map<String, dynamic> userToJson(User userData) {
   return {
     "id": userData.id,
-    "userName": userData.name,
+    "user_name": userData.name,
     "branch": userData.branch,
     "area": userData.area,
-    "email": userData.email,
+    "user_details": {
+      "display_name": userData.userDetails.displayName,
+      "id": userData.userDetails.uid,
+      "email": userData.userDetails.email
+    },
     "mobile": userData.mobile,
     "is_verified": userData.isVerified,
   };

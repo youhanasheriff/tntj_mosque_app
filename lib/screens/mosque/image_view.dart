@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
@@ -8,8 +9,12 @@ class ImageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var images = ModalRoute.of(context)!.settings.arguments as List<String>;
+    var images = ModalRoute.of(context)!.settings.arguments as List;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+      ),
+      extendBodyBehindAppBar: true,
       body: SizedBox(
         height: double.infinity,
         width: double.infinity,
@@ -17,7 +22,7 @@ class ImageView extends StatelessWidget {
           itemCount: images.length,
           builder: (context, index) {
             return PhotoViewGalleryPageOptions(
-              imageProvider: NetworkImage(
+              imageProvider: CachedNetworkImageProvider(
                 images[index],
               ),
             );

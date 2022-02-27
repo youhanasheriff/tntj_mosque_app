@@ -105,8 +105,10 @@ class MosquePage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: themeBlue,
         onPressed: () {
-          MapsLauncher.launchCoordinates(double.parse(mosque.location.lat),
-              double.parse(mosque.location.long));
+          MapsLauncher.launchCoordinates(
+            mosque.location.lat,
+            mosque.location.long,
+          );
         },
         child: Icon(
           Icons.location_on_outlined,

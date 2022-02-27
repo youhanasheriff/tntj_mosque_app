@@ -15,7 +15,6 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   String selectedArea = "--";
-  List<String> list = ["--"];
 
   void onChange(value) {
     setState(() {
@@ -38,7 +37,7 @@ class _SearchPageState extends State<SearchPage> {
         ),
         width: double.infinity,
         child: FutureBuilder<List<String>>(
-          future: Helpers().getAreas(list),
+          future: Helpers().getAreas(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -72,6 +71,10 @@ class _SearchPageState extends State<SearchPage> {
                           .where(
                             "area",
                             isEqualTo: selectedArea,
+                          )
+                          .where(
+                            "is_verified",
+                            isEqualTo: true,
                           )
                           .get(),
                       builder: (context, snapshot) {

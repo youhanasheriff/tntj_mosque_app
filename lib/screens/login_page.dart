@@ -13,6 +13,75 @@ class LoginPage extends StatelessWidget {
 
   final AuthHelper _authHelper = AuthHelper();
 
+  void _loginWithGoogle(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Account Verification"),
+          titleTextStyle: const TextStyle(
+            fontSize: 18,
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+          ),
+          content: const Text.rich(
+            TextSpan(
+              text: "If you Already verified your account ",
+              style: TextStyle(
+                fontSize: 15,
+              ),
+              children: [
+                TextSpan(
+                  text: "Click ",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                TextSpan(
+                  text: "Continue",
+                  style: TextStyle(
+                    color: themeBlue,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.popAndPushNamed(context, VerificationForm.routeName);
+              },
+              child: const Text(
+                "Verify Account",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _authHelper.loginWithGoogle();
+              },
+              child: const Text(
+                "Continue",
+                style: TextStyle(
+                  color: themeBlue,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +92,7 @@ class LoginPage extends StatelessWidget {
         children: [
           const Spacer(flex: 4),
           const Text(
-            "السَّلَامُ عَلَيْكُمْ‎", // "TNTJ Mosque",
+            "السَّلَامُ عَلَيْكُمْ",
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white,
@@ -33,7 +102,7 @@ class LoginPage extends StatelessWidget {
           ),
           const SizedBox(height: 15),
           const Text(
-            "Assalamu Alaikum", // "TNTJ Mosque",
+            "Assalamu Alaikum",
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white,
@@ -49,7 +118,7 @@ class LoginPage extends StatelessWidget {
           const SizedBox(height: 15),
           buildButtons(
             "Sign in with google",
-            _authHelper.loginWithGoogle,
+            () => _loginWithGoogle(context),
             isGoogle: true,
           ),
           const Spacer(flex: 2),

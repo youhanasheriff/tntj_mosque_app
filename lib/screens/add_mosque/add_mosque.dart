@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tntj_mosque/config/config.dart';
 import 'package:tntj_mosque/helpers/helpers.dart';
+import 'package:tntj_mosque/screens/screens.dart';
 import 'package:tntj_mosque/widgets/custom_dropdown.dart';
 import '../../helpers/small_functions.dart';
 
@@ -16,28 +18,20 @@ class AddMosque extends StatefulWidget {
 
 class _AddMosqueState extends State<AddMosque> {
   final nameTextController = TextEditingController();
-
   final addressController = TextEditingController();
-
   final pinCodeController = TextEditingController();
-
   final branchController = TextEditingController();
-
   final List<String> imageUrl = List.generate(3, (index) => "");
-
   final Helpers _helpers = Helpers();
-
   final SmallFunc _smallFunc = SmallFunc();
-
   final List<String> list = ["--"];
-
   String selectedArea = "Select an area";
-
   XFile? pickedImage;
-
   bool isLoading = false;
-
+  bool isLocationAccess = false;
   bool isLocationSelected = false;
+  GeoPoint? location;
+  Map<String, Object?>? oldData;
 
   Future<void> addMosque({
     required String name,
@@ -45,6 +39,7 @@ class _AddMosqueState extends State<AddMosque> {
     required String area,
     required String address,
     required String pinCode,
+    required GeoPoint? location,
   }) async {
     int _temp = 0;
     for (var item in imageUrl) {
@@ -54,11 +49,12 @@ class _AddMosqueState extends State<AddMosque> {
     }
     if (name.trim().isEmpty ||
         branch.trim().isEmpty ||
-        (area.trim().isEmpty || area == "Select an area") ||
+        (area == "--" || area == "Select an area") ||
         address.trim().isEmpty ||
         pinCode.trim().isEmpty ||
         _temp == 3 ||
-        !isLocationSelected) {
+        !isLocationSelected ||
+        location == null) {
       _smallFunc.showSnackBar(
           "Fill all the fields to submit. Insha Allah", context);
     } else {
@@ -72,12 +68,15 @@ class _AddMosqueState extends State<AddMosque> {
         area: area,
         address: address,
         pinCode: pinCode,
+        location: location,
       )
           .then((_) {
         setState(() {
           isLoading = false;
         });
-
+        _smallFunc.showSnackBar(
+            "Your mosque is submitted it will be reviewed and added to the database. Insha Allah",
+            context);
         Navigator.pop(context);
       });
     }
@@ -88,14 +87,106 @@ class _AddMosqueState extends State<AddMosque> {
   }
 
   Future getLocation() async {
-    bool temp = await _helpers.getLocation(showSnack: showIt);
-    setState(() {
-      isLocationSelected = temp;
-    });
+    Map<String, Object?>? data = {
+      "name": nameTextController.text,
+      "branch": branchController.text,
+      "area": selectedArea,
+      "address": addressController.text,
+      "pinCode": pinCodeController.text,
+      "location": location,
+    };
+    Navigator.pushReplacementNamed(
+      context,
+      LocationSelection.routeName,
+      arguments: data,
+    );
+  }
+
+  void chooseImage(int i) async {
+    XFile? temp;
+    void setPic() {
+      if (temp != null) {
+        setState(() {
+          pickedImage = temp;
+          imageUrl[i] = pickedImage!.path;
+        });
+      }
+    }
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _selectImageSource(
+                "Gallery",
+                () async {
+                  Navigator.pop(context);
+                  temp = await _helpers.getImage(i, ImageSource.gallery);
+                  setPic();
+                },
+                icon: Icons.photo,
+              ),
+              _selectImageSource(
+                "Camera",
+                () async {
+                  Navigator.pop(context);
+                  temp = await _helpers.getImage(i, ImageSource.camera);
+                  setPic();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  _selectImageSource(String text, Function() action,
+      {IconData icon = Icons.camera_alt_outlined}) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: 20),
+        IconButton(
+          iconSize: 56,
+          onPressed: action,
+          icon: Icon(icon),
+        ),
+        Text(text),
+        const SizedBox(height: 20),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    oldData =
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object?>?;
+    if (oldData != null) {
+      if (oldData!['name'] != null) {
+        nameTextController.text = oldData!['name'] as String;
+      }
+      if (oldData!['branch'] != null) {
+        branchController.text = oldData!['branch'] as String;
+      }
+      if (oldData!['area'] != null) {
+        selectedArea = oldData!['area'] as String;
+      }
+      if (oldData!['address'] != null) {
+        addressController.text = oldData!['address'] as String;
+      }
+      if (oldData!['pinCode'] != null) {
+        pinCodeController.text = oldData!['pinCode'] as String;
+      }
+      if (oldData!['location'] != null) {
+        location = oldData!['location'] as GeoPoint;
+        isLocationSelected = true;
+      }
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Mosque"),
@@ -110,6 +201,7 @@ class _AddMosqueState extends State<AddMosque> {
                 area: selectedArea,
                 address: addressController.text,
                 pinCode: pinCodeController.text,
+                location: location,
               );
             },
             icon: const Icon(Icons.done_rounded),
@@ -149,16 +241,8 @@ class _AddMosqueState extends State<AddMosque> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      // child: TextField(
-                      //   controller: areaController,
-                      //   decoration: const InputDecoration(
-                      //     border: InputBorder.none,
-                      //     label: Text("Name of the Area"),
-                      //   ),
-                      //   textInputAction: TextInputAction.next,
-                      // ),
                       child: FutureBuilder<List<String>>(
-                          future: Helpers().getAreas(list),
+                          future: Helpers().getAreas(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
@@ -190,7 +274,7 @@ class _AddMosqueState extends State<AddMosque> {
                         controller: addressController,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
-                          label: Text("Full Address"),
+                          label: Text("Full Address "),
                         ),
                         textInputAction: TextInputAction.next,
                       ),
@@ -201,7 +285,7 @@ class _AddMosqueState extends State<AddMosque> {
                         controller: pinCodeController,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
-                          label: Text("Pin Code :"),
+                          label: Text("Pin Code : "),
                         ),
                       ),
                     ),
@@ -222,10 +306,11 @@ class _AddMosqueState extends State<AddMosque> {
                             ),
                           ),
                           TextButton.icon(
-                            onPressed: getLocation,
+                            onPressed: isLocationAccess ? null : getLocation,
                             style: ButtonStyle(
-                                foregroundColor:
-                                    MaterialStateProperty.all(themeBlue)),
+                              foregroundColor:
+                                  isLocationAccess ? null : getStyle(themeBlue),
+                            ),
                             icon: const Icon(Icons.add_location_alt_outlined),
                             label: const Text("Select location"),
                           ),
@@ -239,14 +324,7 @@ class _AddMosqueState extends State<AddMosque> {
                         for (var i = 0; i < imageUrl.length; i++)
                           imageSelection(
                             imageUrl[i],
-                            () async {
-                              var temp = await _helpers.getImage(
-                                  i, ImageSource.camera);
-                              setState(() {
-                                pickedImage = temp;
-                                imageUrl[i] = pickedImage!.path;
-                              });
-                            },
+                            () => chooseImage(i),
                           )
                       ],
                     ),
