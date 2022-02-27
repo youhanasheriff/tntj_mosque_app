@@ -65,6 +65,12 @@ class Helpers {
     required String pinCode,
     required GeoPoint location,
   }) async {
+    var snapshot = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get();
+    var docs = snapshot.data();
+
     final _storage = FirebaseStorage.instance.ref("/mosques");
 
     var data = {
@@ -80,7 +86,8 @@ class Helpers {
       "uploaded_by": {
         "display_name": user!.displayName,
         "id": user!.uid,
-        "email": user!.email
+        "email": user!.email,
+        "mobile": docs!['mobile'],
       },
     };
 
